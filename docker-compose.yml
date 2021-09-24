@@ -1,4 +1,4 @@
-version: "3.8"
+version:   "3.9"
 
 services:
   mongodb:
@@ -14,13 +14,13 @@ services:
     networks:
       - mongodb_network
     ports:
-      - 37017:37017
+      - "37017:37017"
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongo:37017/test --quiet
       interval: 30s
       timeout: 10s
       retries: 3
-      restart: unless-stopped
+      start_period: 40s
 
   mongo-express:
     image: mongo-express
@@ -44,17 +44,17 @@ services:
     ports:
       - 9081:9081
     healthcheck:
-      test:  wget --quiet --tries=3 --spider http://admin:admin123@mongo:9081 || exit 1
+      test: wget --quiet --tries=3 --spider http://admin:admin123@mongo:9081 || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
-      restart: unless-stopped
+      start_period: 40s
 
 secrets:
-    db_root_password:
-     file: db_root_password.txt
-   me_admin_password:
-     file: me_admin_password.txt
+  db_root_password:
+    file: db_root_password.txt
+  me_admin_password:
+    file: me_admin_password.txt
    
 volumes:
   mongodb-data:
