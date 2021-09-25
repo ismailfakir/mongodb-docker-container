@@ -3,6 +3,7 @@ version:   "3.9"
 services:
   mongodb:
     image: mongo
+    restart: always
     container_name: mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
@@ -10,11 +11,12 @@ services:
     secrets:
       - db_root_password
     volumes:
-      - mongodb-data:/data/db
+      - ./mongodb-data:/data/db
     networks:
       - mongodb_network
     ports:
-      - "37017:37017"
+      - 37017:27017
+      - 9229:9229
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongo:37017/test --quiet
       interval: 30s
@@ -24,8 +26,10 @@ services:
 
   mongo-express:
     image: mongo-express
+    restart: always
     container_name: mongo-express
     environment:
+      - ME_CONFIG_MONGODB_PORT=27017
       - ME_CONFIG_MONGODB_SERVER=mongodb
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
       - ME_CONFIG_MONGODB_ADMINUSERNAME=root
@@ -42,13 +46,7 @@ services:
     networks:
       - mongodb_network
     ports:
-      - 9081:9081
-    healthcheck:
-      test: wget --quiet --tries=3 --spider http://admin:admin123@mongo:9081 || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - 9081:8081
 
 secrets:
   db_root_password:
@@ -63,3 +61,4 @@ volumes:
 networks:
   mongodb_network:
     name: mongodb_network
+    driver: bridge
