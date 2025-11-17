@@ -1,6 +1,6 @@
 # mongodb-docker-container
 How to run:
-1. create directory 'mongodb-data' in the current folder.
+1. create directory 'mongodb_data' in the current folder.
 2. create the following the following files with secret password for mongodb 'root' user & mongo express 'admin' user:
 - db_root_password.txt
 - me_admin_password.txt
