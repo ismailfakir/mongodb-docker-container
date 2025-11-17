@@ -1,8 +1,9 @@
 version:   "3.9"
 
 services:
+  # MongoDB
   mongodb:
-    image: mongo
+    image: mongo:7.0
     restart: always
     container_name: mongodb
     environment:
@@ -11,7 +12,7 @@ services:
     secrets:
       - db_root_password
     volumes:
-      - ./mongodb-data:/data/db
+      - mongodb_data:/data/db
     networks:
       - mongodb_network
     ports:
@@ -23,7 +24,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
+  # Mongo Express
   mongo-express:
     image: mongo-express
     restart: always
@@ -39,8 +40,6 @@ services:
     secrets:
       - db_root_password
       - me_admin_password
-    volumes:
-      - mongodb-data
     depends_on:
       - mongodb
     networks:
@@ -54,9 +53,9 @@ secrets:
   me_admin_password:
     file: me_admin_password.txt
    
-volumes:
-  mongodb-data:
-    name: mongodb-data
+volumes: 
+  mongodb_data:
+    driver: local
 
 networks:
   mongodb_network:
